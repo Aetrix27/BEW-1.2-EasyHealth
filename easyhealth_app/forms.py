@@ -15,7 +15,6 @@ class SignUpPatientForm(FlaskForm):
     name = StringField('Name:', validators=[DataRequired(), Length(min=1, max=40)])
     password = PasswordField('Password', validators=[DataRequired()])
     email = StringField('Email:', validators=[DataRequired(), Length(min=1, max=40)])
-    phone = StringField('Phone:', validators=[DataRequired(), Length(min=1, max=30)])
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):

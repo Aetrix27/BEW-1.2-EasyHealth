@@ -1,0 +1,74 @@
+<!-- login.html -->
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Sign Up</h1>
+
+<form action="/signup_doctor" method="POST">
+    {{ form.csrf_token }}
+    <fieldset>
+        <legend>Enter your credentials</legend>
+
+        {{ form.username.label }}
+        {{ form.username }}
+        <ul>
+        {% for error in form.username.errors %}
+            <li class="error">{{ error }}</li>
+        {% endfor %}
+        </ul>
+
+        {{ form.password.label }}
+        {{ form.password }}
+        <ul>
+        {% for error in form.password.errors %}
+            <li class="error">{{ error }}</li>
+        {% endfor %}
+        </ul>
+
+        {{ form.name.label }}
+        {{ form.name }}
+        <ul>
+        {% for error in form.name.errors %}
+            <li class="error">{{ error }}</li>
+        {% endfor %}
+        </ul>
+
+        {{ form.email.label }}
+        {{ form.email }}
+        <ul>
+        {% for error in form.email.errors %}
+            <li class="error">{{ error }}</li>
+        {% endfor %}
+        </ul>
+
+        {{ form.phone.label }}
+        {{ form.phone }}
+        <ul>
+        {% for error in form.phone.errors %}
+            <li class="error">{{ error }}</li>
+        {% endfor %}
+        </ul>
+
+        {{ form.care_service.label }}
+        {{ form.care_service }}
+        <ul>
+        {% for error in form.care_service.errors %}
+            <li class="error">{{ error }}</li>
+        {% endfor %}
+        </ul>
+
+        {{ form.credentials.label }}
+        {{ form.credentials }}
+        <ul>
+        {% for error in form.credentials.errors %}
+            <li class="error">{{ error }}</li>
+        {% endfor %}
+        </ul>
+
+        
+
+        {{ form.submit }}
+    </fieldset>
+</form>
+
+{% endblock %}

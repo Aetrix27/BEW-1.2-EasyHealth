@@ -19,7 +19,6 @@ auth = Blueprint("auth", __name__)
 
 @main.route('/')
 def homepage():
-
     all_doctors = Doctor.query.all()
     all_patients = Patient.query.all()
 
@@ -33,17 +32,17 @@ def signup_patient():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         patient = Patient(
             username=form.username.data,
+            password=hashed_password,
             name=form.name.data,
-            email=form.email.data,
-            password=hashed_password
+            email=form.email.data
         )
         db.session.add(patient)
         db.session.commit()
         flash('Account Created.')
         print('created')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.login_patient'))
     print(form.errors)
-    return render_template('signup.html', form=form)
+    return render_template('patient_signup.html', form=form)
 
 @auth.route('/login_patient', methods=['GET', 'POST'])
 def login_patient():
@@ -82,15 +81,15 @@ def signup_doctor():
         db.session.commit()
         flash('Account Created.')
         print('created')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.login_doctor'))
     print(form.errors)
-    return render_template('signup.html', form=form)    
+    return render_template('doctor_signup.html', form=form)    
 
 @auth.route('/login_doctor', methods=['GET', 'POST'])
 def login_doctor():
     form = LoginDoctorForm()
     if form.validate_on_submit():
-        user = Patient.query.filter_by(username=form.username.data).first()
+        user = Doctor.query.filter_by(username=form.username.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=True)
             next_page = request.args.get('next')
