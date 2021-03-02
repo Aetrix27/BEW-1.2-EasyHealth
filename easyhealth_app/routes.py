@@ -2,13 +2,15 @@
 import os
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from datetime import date, datetime
-from easyhealth_app.models import Doctor, Patient
+from easyhealth_app.models import Doctor, Patient, Document
+from easyhealth_app.forms import DocumentForm, SignUpPatientForm, SignUpDoctorForm, LoginDoctorForm, LoginPatientForm
+from easyhealth_app import bcrypt
 
 # Import app and db from events_app package so that we can run app
 from easyhealth_app import app, db
 
-
-main = Blueprint('main', __name__)
+main = Blueprint("main", __name__)
+auth = Blueprint("auth", __name__)
 
 
 ##########################################
@@ -16,11 +18,12 @@ main = Blueprint('main', __name__)
 ##########################################
 
 @main.route('/')
-def index():
+def homepage():
 
-    context = {
+    all_doctors = Doctor.query.all()
+    all_patients = Patient.query.all()
 
-    }
+    return render_template('home.html', all_doctors=all_doctors, all_patients=all_patients)
 
-    return render_template('index.html', **context)
+
 

@@ -1,4 +1,3 @@
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from easyhealth_app.config import Config
@@ -20,13 +19,13 @@ login_manager.init_app(app)
 
 from .models import Patient
 
-@login_manager.patient_loader
+@login_manager.user_loader
 def load_patient(patient_id):
     return Patient.query.get(patient_id)
 
 from .models import Doctor
 
-@login_manager.doctor_loader
+@login_manager.user_loader
 def load_doctor(doctor_id):
     return Doctor.query.get(doctor_id)
 
