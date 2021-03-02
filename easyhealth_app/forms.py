@@ -24,18 +24,17 @@ class SignUpPatientForm(FlaskForm):
             raise ValidationError('That username is taken. Please choose a different one.')
 
 class LoginPatientForm(FlaskForm):
-    username = StringField('User Name', validators=[DataRequired(), Length(min=3, max=50)])
+    username = StringField('User Name:', validators=[DataRequired(), Length(min=3, max=50)])
     password = PasswordField('Password', validators=[DataRequired()])
 
     submit = SubmitField('Log In')
 
 class SignUpDoctorForm(FlaskForm):
-    username = StringField('User Name',validators=[DataRequired(), Length(min=3, max=50)])
-    name = StringField('Name:', validators=[DataRequired(), Length(min=1, max=40)])
+    username = StringField('User Name:',validators=[DataRequired(), Length(min=3, max=50)])
     password = PasswordField('Password', validators=[DataRequired()])
+    name = StringField('Name:', validators=[DataRequired(), Length(min=1, max=40)])
     email = StringField('Email:', validators=[DataRequired(), Length(min=1, max=40)])
     phone = StringField('Phone:', validators=[DataRequired(), Length(min=1, max=30)])
-    email = StringField('Email:', validators=[DataRequired(), Length(min=1, max=40)])
     care_service = StringField('Healthcare Service:', validators=[DataRequired(), Length(min=1, max=40)])
     credentials = StringField('Doctor Credentials:', validators=[DataRequired(), Length(min=1, max=40)])
 
