@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, SelectField, SubmitField, TextAreaField, FloatField, PasswordField
+from wtforms import StringField, DateField, SelectField, SubmitField, TextAreaField, FloatField, PasswordField, BooleanField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import DataRequired, Length, URL, ValidationError
-from easyhealth_app.models import Patient, Doctor, Document
+from easyhealth_app.models import User, Document
 
 class DocumentForm(FlaskForm):
     title = StringField('Title:', validators=[DataRequired(), Length(min=1, max=40)])
@@ -10,41 +10,25 @@ class DocumentForm(FlaskForm):
     
     submit = SubmitField('Submit')
 
-class SignUpPatientForm(FlaskForm):
-    username = StringField('User Name', validators=[DataRequired(), Length(min=3, max=50)])
-    name = StringField('Name:', validators=[DataRequired(), Length(min=1, max=40)])
-    password = PasswordField('Password', validators=[DataRequired()])
-    email = StringField('Email:', validators=[DataRequired(), Length(min=1, max=40)])
-    submit = SubmitField('Sign Up')
-
-    def validate_username(self, username):
-        patient = Patient.query.filter_by(username=username.data).first()
-        if patient:
-            raise ValidationError('That username is taken. Please choose a different one.')
-
-class LoginPatientForm(FlaskForm):
+class LoginForm(FlaskForm):
     username = StringField('User Name:', validators=[DataRequired(), Length(min=3, max=50)])
     password = PasswordField('Password', validators=[DataRequired()])
 
     submit = SubmitField('Log In')
 
-class SignUpDoctorForm(FlaskForm):
+class SignUpForm(FlaskForm):
     username = StringField('User Name:',validators=[DataRequired(), Length(min=3, max=50)])
     password = PasswordField('Password', validators=[DataRequired()])
     name = StringField('Name:', validators=[DataRequired(), Length(min=1, max=40)])
     email = StringField('Email:', validators=[DataRequired(), Length(min=1, max=40)])
     phone = StringField('Phone:', validators=[DataRequired(), Length(min=1, max=30)])
     care_service = StringField('Healthcare Service:', validators=[DataRequired(), Length(min=1, max=40)])
-    credentials = StringField('Doctor Credentials:', validators=[DataRequired(), Length(min=1, max=40)])
+    is_doctor = BooleanField('Are you a Doctor?')
+    #credentials = StringField('Doctor Credentials:', validators=[DataRequired(), Length(min=1, max=40)])
 
     submit = SubmitField('Sign Up')
 
     def validate_username(self, username):
-        doctor = Doctor.query.filter_by(username=username.data).first()
-        if doctor:
+        user = User.query.filter_by(username=username.data).first()
+        if user:
             raise ValidationError('That username is taken. Please choose a different one.')
-
-class LoginDoctorForm(FlaskForm):
-    username = StringField('User Name', validators=[DataRequired(), Length(min=3, max=50)])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Log In')

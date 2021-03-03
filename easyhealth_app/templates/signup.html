@@ -4,7 +4,7 @@
 
 <h1>Sign Up</h1>
 
-<form action="/signup_doctor" method="POST">
+<form action="/signup" method="POST">
     {{ form.csrf_token }}
     <fieldset>
         <legend>Enter your credentials</legend>
@@ -33,6 +33,7 @@
         {% endfor %}
         </ul>
 
+
         {{ form.email.label }}
         {{ form.email }}
         <ul>
@@ -41,31 +42,25 @@
         {% endfor %}
         </ul>
 
+        {% for error in form.phone.errors %}
+        <span class="error">*{{ error }}</span>
+        {% endfor %}
         {{ form.phone.label }}
         {{ form.phone }}
-        <ul>
-        {% for error in form.phone.errors %}
-            <li class="error">{{ error }}</li>
-        {% endfor %}
-        </ul>
 
+        {% for error in form.care_service.errors %}
+        <span class="error">*{{ error }}</span>
+        {% endfor %}
         {{ form.care_service.label }}
         {{ form.care_service }}
-        <ul>
-        {% for error in form.care_service.errors %}
-            <li class="error">{{ error }}</li>
-        {% endfor %}
-        </ul>
-
-        {{ form.credentials.label }}
-        {{ form.credentials }}
-        <ul>
-        {% for error in form.credentials.errors %}
-            <li class="error">{{ error }}</li>
-        {% endfor %}
-        </ul>
 
         
+
+        {% for error in form.is_doctor.errors %}
+        <span class="error">*{{ error }}</span>
+        {% endfor %}
+        {{ form.is_doctor.label }}
+        {{ form.is_doctor }}
 
         {{ form.submit }}
     </fieldset>

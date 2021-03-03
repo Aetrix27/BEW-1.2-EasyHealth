@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>New Item</h1>
+
+<form method="POST" action="{{ url_for('main.new_document') }}">
+    {{ form.csrf_token }} 
+
+    <fieldset>
+        <legend>Please enter your information:</legend>
+
+        <!-- TODO: Remove the next paragraph and use the `form` object passed in 
+            from the route to render a form. -->
+        <p><em>Form fields go here!</em></p>
+        
+        <!-- Uses the `form` object passed in from the route to render a form. -->
+        {% for error in form.title.errors %}
+            <span class="error">*{{ error }}</span>
+        {% endfor %}
+        {{ form.title.label }}
+        {{ form.title }}
+
+        {% for error in form.file_url.errors %}
+            <span class="error">*{{ error }}</span>
+        {% endfor %}
+        {{ form.file_url.label }}
+        {{ form.file_url }}
+
+        {{ form.submit }}
+
+    </fieldset>
+</form>
+
+
+{% endblock %}

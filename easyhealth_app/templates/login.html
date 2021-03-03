@@ -1,10 +1,11 @@
-<!-- login.html -->
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Sign Up</h1>
+<h1>Log In</h1>
 
-<form action="/signup_patient" method="POST">
+<!-- TODO: Fill in the sign up form here! -->
+
+<form action="/login" method="POST">
     {{ form.csrf_token }}
     <fieldset>
         <legend>Enter your credentials</legend>
@@ -25,25 +26,7 @@
         {% endfor %}
         </ul>
 
-        {{ form.name.label }}
-        {{ form.name }}
-        <ul>
-        {% for error in form.name.errors %}
-            <li class="error">{{ error }}</li>
-        {% endfor %}
-        </ul>
-
-
-        {{ form.email.label }}
-        {{ form.email }}
-        <ul>
-        {% for error in form.email.errors %}
-            <li class="error">{{ error }}</li>
-        {% endfor %}
-        </ul>
-
         {{ form.submit }}
     </fieldset>
 </form>
-
 {% endblock %}

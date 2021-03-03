@@ -2,53 +2,113 @@ import os
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import date, datetime
-from easyhealth_app.models import Doctor, Patient, Document
-from easyhealth_app.forms import DocumentForm, SignUpPatientForm, SignUpDoctorForm, LoginDoctorForm, LoginPatientForm
+from easyhealth_app.models import User, Document, Doctor, Patient
+from easyhealth_app.forms import DocumentForm, SignUpForm, LoginForm
 from easyhealth_app import bcrypt
 
 # Import app and db from events_app package so that we can run app
 from easyhealth_app import app, db
 
-main = Blueprint("main", __name__)
 auth = Blueprint("auth", __name__)
+patients = Blueprint("patients", __name__)
 
 
 ##########################################
 #           Routes                       #
 ##########################################
 
-@main.route('/')
+@auth.route('/')
 def homepage():
-    all_doctors = Doctor.query.all()
-    all_patients = Patient.query.all()
 
-    return render_template('home.html', all_doctors=all_doctors, all_patients=all_patients)
+    return render_template('home.html')
 
-@auth.route('/signup_patient', methods=['GET', 'POST'])
-def signup_patient():
+@patients.route('/new_document', methods=['GET', 'POST'])
+def new_item():
+    form = DocumentForm()
+
+    if form.validate_on_submit(): 
+        new_Document = Document(
+            title=form.title.data,
+            file_url=form.file_url.data
+    
+        )
+        db.session.add(new_Document)
+        db.session.commit()
+        
+        flash('New Document was successfully created')
+        return redirect(url_for('main.document_detail', document_id=new_Document.id))
+
+    return render_template('new_document.html', form=form)
+
+@auth.route('/signup', methods=['GET', 'POST'])
+def signup():
     print('in signup')
-    form = SignUpPatientForm()
+    form = SignUpForm()
+    patient_check = 0
+    doctor_check = 0
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        patient = Patient(
+        user = User(
             username=form.username.data,
             password=hashed_password,
             name=form.name.data,
-            email=form.email.data
+            email=form.email.data,
+            phone=form.phone.data,
+            care_service=form.care_service.data,
+            is_doctor=form.is_doctor.data
         )
-        db.session.add(patient)
+
+        db.session.add(user)
         db.session.commit()
+
+        get_user = User.query.filter_by(username=form.username.data).first()
+        print(get_user.username)
+
+        if get_user.is_doctor == True:
+            patient_check = None
+            doctor = Doctor(
+                username=form.username.data,
+                password=hashed_password,
+                name=form.name.data,
+                email=form.email.data,
+                phone=form.phone.data,
+                care_service=form.care_service.data,
+            )
+
+            db.session.add(user)
+            db.session.add(doctor)
+            db.session.commit()
+
+            print(patient_check)
+            print(doctor_check)
+        elif get_user.is_doctor == False:
+            doctor_check = None
+            patient = Patient(
+                username=form.username.data,
+                password=hashed_password,
+                name=form.name.data,
+                email=form.email.data,
+                phone=form.phone.data,
+                care_service=form.care_service.data,
+            )
+
+            db.session.add(patient)
+            db.session.commit()
+        
         flash('Account Created.')
         print('created')
-        return redirect(url_for('auth.login_patient'))
-    print(form.errors)
-    return render_template('patient_signup.html', form=form)
 
-@auth.route('/login_patient', methods=['GET', 'POST'])
-def login_patient():
-    form = LoginPatientForm()
+        db.session.commit()
+
+        return redirect(url_for('auth.login'))
+    print(form.errors)
+    return render_template('signup.html', form=form)
+
+@auth.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
     if form.validate_on_submit():
-        user = Patient.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(username=form.username.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=True)
             next_page = request.args.get('next')
@@ -60,41 +120,5 @@ def login_patient():
 def logout():
     logout_user()
     return redirect(url_for('main.homepage'))
-
-@auth.route('/signup_doctor', methods=['GET', 'POST'])
-def signup_doctor():
-    print('in signup')
-    form = SignUpDoctorForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        doctor = Doctor(
-            username=form.username.data,
-            password=hashed_password,
-            name=form.name.data,
-            email=form.email.data,
-            phone=form.phone.data,
-            care_service=form.care_service.data,
-            credentials=form.credentials.data
-
-        )
-        db.session.add(doctor)
-        db.session.commit()
-        flash('Account Created.')
-        print('created')
-        return redirect(url_for('auth.login_doctor'))
-    print(form.errors)
-    return render_template('doctor_signup.html', form=form)    
-
-@auth.route('/login_doctor', methods=['GET', 'POST'])
-def login_doctor():
-    form = LoginDoctorForm()
-    if form.validate_on_submit():
-        user = Doctor.query.filter_by(username=form.username.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=True)
-            next_page = request.args.get('next')
-            return redirect(next_page if next_page else url_for('main.homepage'))
-    return render_template('login.html', form=form)
-
 
 
