@@ -2,11 +2,12 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, SelectField, SubmitField, TextAreaField, FloatField, PasswordField, BooleanField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.validators import DataRequired, Length, URL, ValidationError
-from easyhealth_app.models import User, Document
+from easyhealth_app.models import User, Document, Patient, Doctor
 
 class DocumentForm(FlaskForm):
     title = StringField('Title:', validators=[DataRequired(), Length(min=1, max=40)])
     file_url = StringField('Photo URL:', validators=[DataRequired(), URL()])
+    doctor_id = QuerySelectMultipleField('Doctor:', query_factory=lambda: Patient.query)
     
     submit = SubmitField('Submit')
 

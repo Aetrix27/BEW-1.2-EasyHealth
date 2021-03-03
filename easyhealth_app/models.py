@@ -11,8 +11,6 @@ from flask import session
 
 
 class User(db.Model, UserMixin):
-    #login_type = db.Column(db.String(20))
-
     is_doctor = db.Column(db.Boolean, nullable=False, default=False)
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
@@ -23,11 +21,8 @@ class User(db.Model, UserMixin):
     care_service = db.Column(db.String(80))
 
     #credentials = db.Column(db.String(80), nullable=False)
-    #users = db.relationship("User", secondary = 'patient_doctor', back_populates='users')
 
 class Patient(db.Model):
-    #login_type = db.Column(db.String(20))
-
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
@@ -35,12 +30,11 @@ class Patient(db.Model):
     email = db.Column(db.String(80), nullable=False)
     phone = db.Column(db.String(80))
     care_service = db.Column(db.String(80))
-    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
-
+    doctor = db.relationship('Doctor', back_populates='patients')
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
+    #doctors = db.relationship('Genre', secondary='book_genre', back_populates='books')
   
 class Doctor(db.Model):
-    #login_type = db.Column(db.String(20))
-
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
@@ -48,7 +42,8 @@ class Doctor(db.Model):
     email = db.Column(db.String(80), nullable=False)
     phone = db.Column(db.String(80))
     care_service = db.Column(db.String(80))
-    patients = db.relationship('Patient', backref='doctor', lazy=True)
+    patients = db.relationship('Patient', back_populates='doctor')
+    #patients = db.relationship('Genre', secondary='book_genre', back_populates='books')
 
 
 #patient_doctor_table = db.Table('patient_doctor',
@@ -63,7 +58,6 @@ class Document(db.Model):
 
     #patient_table_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
     #doctor_table_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
-
     
 #medical_docs_table = db.Table('medical_docs_table',
  #   db.Column('patient_id', db.Integer, db.ForeignKey('patient.id')),

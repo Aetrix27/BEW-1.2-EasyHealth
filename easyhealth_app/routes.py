@@ -23,7 +23,7 @@ def homepage():
     return render_template('home.html')
 
 @patients.route('/new_document', methods=['GET', 'POST'])
-def new_item():
+def new_document():
     form = DocumentForm()
 
     if form.validate_on_submit(): 
@@ -36,7 +36,7 @@ def new_item():
         db.session.commit()
         
         flash('New Document was successfully created')
-        return redirect(url_for('main.document_detail', document_id=new_Document.id))
+        return redirect(url_for('patients.document_detail', document_id=new_Document.id))
 
     return render_template('new_document.html', form=form)
 
