@@ -11,7 +11,7 @@ from flask import session
 
 
 class User(db.Model, UserMixin):
-    is_doctor = db.Column(db.Boolean, nullable=False, default=False)
+    is_doctor = db.Column(db.Boolean, default=False)
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
@@ -22,7 +22,8 @@ class User(db.Model, UserMixin):
 
     #credentials = db.Column(db.String(80), nullable=False)
 
-class Patient(db.Model):
+
+class Patient(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
@@ -30,11 +31,12 @@ class Patient(db.Model):
     email = db.Column(db.String(80), nullable=False)
     phone = db.Column(db.String(80))
     care_service = db.Column(db.String(80))
-    doctor = db.relationship('Doctor', back_populates='patients')
-    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
-    #doctors = db.relationship('Genre', secondary='book_genre', back_populates='books')
-  
-class Doctor(db.Model):
+
+    doctors = db.relationship("Doctor", secondary = 'patient_doctor', back_populates='patients')
+    pts_created = db.relationship("Document", back_populates='patient_docs')
+
+
+class Doctor(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
@@ -42,25 +44,28 @@ class Doctor(db.Model):
     email = db.Column(db.String(80), nullable=False)
     phone = db.Column(db.String(80))
     care_service = db.Column(db.String(80))
-    patients = db.relationship('Patient', back_populates='doctor')
-    #patients = db.relationship('Genre', secondary='book_genre', back_populates='books')
 
+    patients = db.relationship("Patient", secondary = 'patient_doctor', back_populates='doctors')
+    drs_created = db.relationship("Document", back_populates='doctor_docs')
 
-#patient_doctor_table = db.Table('patient_doctor',
- #   db.Column('patient_id', db.Integer, db.ForeignKey('patient.id')),
- #   db.Column('doctor_id', db.Integer, db.ForeignKey('doctor.id'))
-#)
+patient_doctor_table = db.Table('patient_doctor',
+    db.Column('patient_id', db.Integer, db.ForeignKey('patient.id')),
+    db.Column('doctor_id', db.Integer, db.ForeignKey('doctor.id'))
+
+)
 
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), nullable=False)
-    file_url = db.Column(db.String(80), nullable=False)
 
-    #patient_table_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
-    #doctor_table_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
+    patient_table_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
+    doctor_table_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
     
-#medical_docs_table = db.Table('medical_docs_table',
- #   db.Column('patient_id', db.Integer, db.ForeignKey('patient.id')),
- #   db.Column('doctor_id', db.Integer, db.ForeignKey('doctor.id')),
-   # db.Column('document_id', db.Integer, db.ForeignKey('document.id'))
-#)
+    patient_docs = db.relationship("Patient", back_populates='pts_created')
+    doctor_docs = db.relationship("Doctor", back_populates='drs_created')
+    
+medical_docs_table = db.Table('medical_docs_table',
+    db.Column('patient_id', db.Integer, db.ForeignKey('patient.id')),
+    db.Column('doctor_id', db.Integer, db.ForeignKey('doctor.id')),
+    db.Column('document_id', db.Integer, db.ForeignKey('document.id'))
+)

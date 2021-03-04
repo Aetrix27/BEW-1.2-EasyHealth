@@ -1,10 +1,33 @@
-<html>
+{% extends 'base.html' %}
+{% block content %}
 
 
+<form method="POST" action = "{{ url_for('patients.document_detail', document_id=document.id) }}">
+        {{ form.csrf_token }} 
+    
+        <fieldset>
+            <legend>Please enter your information:</legend>
+    
+            <p><em>Form fields go here!</em></p>
+            
+            <!-- Uses the `form` object passed in from the route to render a form. -->
+            {% for error in form.title.errors %}
+            <span class="error">*{{ error }}</span>
+            {% endfor %}
+            {{ form.title.label }}
+            {{ form.title }}
 
-<form method="POST" action = "{{ url_for('main.document_detail', document_id=document.id) }}">
-  
+            {{ form.pts_created.label }}
+            {{ form.pts_created }}
+
+            {{ form.drs_created.label }}
+            {{ form.drs_created }}
+
+            {{ form.submit }}
+
+    
+        </fieldset>
 </form>
 
 
-</html>
+{% endblock %}

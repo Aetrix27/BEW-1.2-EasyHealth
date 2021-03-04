@@ -20,19 +20,14 @@
         {{ form.title.label }}
         {{ form.title }}
 
-        {% for error in form.pts_created.errors %}
+        {% for error in form.file_url.errors %}
             <span class="error">*{{ error }}</span>
         {% endfor %}
+        {{ form.file_url.label }}
+        {{ form.file_url }}
 
-        {{ form.pts_created.label }}
-        {{ form.pts_created }}
-
-        {% for error in form.drs_created.errors %}
-        <span class="error">*{{ error }}</span>
-        {% endfor %}
-
-        {{ form.drs_created.label }}
-        {{ form.drs_created }}
+        {{ form.doctor_id.label }}
+        {{ form.doctor_id }}
 
         {{ form.submit }}
 

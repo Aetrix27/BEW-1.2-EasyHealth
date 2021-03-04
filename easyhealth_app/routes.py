@@ -11,6 +11,7 @@ from easyhealth_app import app, db
 
 auth = Blueprint("auth", __name__)
 patients = Blueprint("patients", __name__)
+doctors = Blueprint("doctors", __name__)
 
 
 ##########################################
@@ -23,22 +24,47 @@ def homepage():
     return render_template('home.html')
 
 @patients.route('/new_document', methods=['GET', 'POST'])
+@login_required
 def new_document():
     form = DocumentForm()
 
     if form.validate_on_submit(): 
-        new_Document = Document(
-            title=form.title.data,
-            file_url=form.file_url.data
     
+        document = Document(
+            title=form.title.data,
+            patient_table_id=form.pts_created.data,
+            doctor_table_id=form.drs_created.data
+
         )
-        db.session.add(new_Document)
+        print(form.pts_created.data)
+        db.session.add(document)
         db.session.commit()
         
         flash('New Document was successfully created')
-        return redirect(url_for('patients.document_detail', document_id=new_Document.id))
+        return redirect(url_for('patients.document_detail', document_id=document.id))
 
     return render_template('new_document.html', form=form)
+
+@patients.route('/document/<document_id>', methods=['GET', 'POST'])
+@login_required
+def document_detail(document_id):
+    document = Document.query.get(document_id)
+    form = DocumentForm(obj=document)
+
+    if form.validate_on_submit():
+        document.title = (form.title.data,)
+        document.patient_table_id=(form.pts_created.data)
+        document.doctor_table_id=(form.drs_created.data)
+
+    db.session.add(document)
+    db.session.commit()
+    flash('A new Grocery Item was successfully updated')
+
+    document = Document.query.get(document_id)
+    return render_template('document_detail.html', document=document, form=form)
+
+#@doctors.route('/document/<document_id>', methods=['GET', 'POST'])
+#@login_required
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -62,7 +88,6 @@ def signup():
         db.session.commit()
 
         get_user = User.query.filter_by(username=form.username.data).first()
-        print(get_user.username)
 
         if get_user.is_doctor == True:
             patient_check = None
@@ -75,7 +100,7 @@ def signup():
                 care_service=form.care_service.data,
             )
 
-            db.session.add(user)
+            #db.session.add(user)
             db.session.add(doctor)
             db.session.commit()
 
@@ -112,13 +137,13 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=True)
             next_page = request.args.get('next')
-            return redirect(next_page if next_page else url_for('main.homepage'))
+            return redirect(next_page if next_page else url_for('auth.homepage'))
     return render_template('login.html', form=form)
 
 @auth.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('main.homepage'))
+    return redirect(url_for('auth.homepage'))
 
 
