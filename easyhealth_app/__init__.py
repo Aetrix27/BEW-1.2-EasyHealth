@@ -30,10 +30,11 @@ def create_app(config_class=Config):
     db.init_app(app)
     login_manager.init_app(app)
 
-    from easyhealth_app.routes import auth, patients
+    from easyhealth_app.routes import auth, patients, doctors
 
     app.register_blueprint(auth)
     app.register_blueprint(patients)
+    app.register_blueprint(doctors)
 
     with app.app_context():
         db.create_all()

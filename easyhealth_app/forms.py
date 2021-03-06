@@ -8,8 +8,8 @@ class DocumentForm(FlaskForm):
     title = StringField('Title:', validators=[DataRequired(), Length(min=1, max=40)])
     #pts_created = QuerySelectMultipleField('Patient:', query_factory=lambda: Patient.query, get_label='username')
     #drs_created = QuerySelectMultipleField('Doctor:', query_factory=lambda: Doctor.query, get_label='username')
-    pts_created= StringField('Patient:', validators=[DataRequired(), Length(min=1, max=40)])
-    drs_created = StringField('Doctor:', validators=[DataRequired(), Length(min=1, max=40)])
+    pts_created= FloatField('Patient:')
+    drs_created = FloatField('Doctor:')
     
     submit = SubmitField('Submit')
 

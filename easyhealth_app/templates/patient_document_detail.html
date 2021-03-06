@@ -2,7 +2,7 @@
 {% block content %}
 
 
-<form method="POST" action = "{{ url_for('patients.document_detail', document_id=document.id) }}">
+<form method="POST" action = "{{ url_for('patients.patient_document_detail', document_id=document.id) }}">
         {{ form.csrf_token }} 
     
         <fieldset>
@@ -16,9 +16,6 @@
             {% endfor %}
             {{ form.title.label }}
             {{ form.title }}
-
-            {{ form.pts_created.label }}
-            {{ form.pts_created }}
 
             {{ form.drs_created.label }}
             {{ form.drs_created }}

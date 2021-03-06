@@ -3,7 +3,7 @@
 
 <h1>New Item</h1>
 
-<form method="POST" action="{{ url_for('patients.new_document') }}">
+<form method="POST" action="{{ url_for('doctors.new_doctor_document') }}">
     {{ form.csrf_token }} 
 
     <fieldset>
@@ -20,16 +20,16 @@
         {{ form.title.label }}
         {{ form.title }}
 
-        {% for error in form.file_url.errors %}
+        {% for error in form.pts_created.errors %}
             <span class="error">*{{ error }}</span>
         {% endfor %}
-        {{ form.file_url.label }}
-        {{ form.file_url }}
 
-        {{ form.doctor_id.label }}
-        {{ form.doctor_id }}
+        {{ form.pts_created.label }}
+        {{ form.pts_created }}
 
         {{ form.submit }}
+
+
 
     </fieldset>
 </form>

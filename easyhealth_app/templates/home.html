@@ -1,10 +1,20 @@
-<html>
-<a href = "/signup">Sign Up</a>
-
-<a href = "/login">Sign In</a>
+{% extends 'base.html' %}
+{% block content %}
 
 
-<a href = "/new_document">Send Medical Document</a>
+
+    {% for document in documents %}
+    <div class="store">
+        {% if not current_user.is_doctor %}
+            <a href="/patient_document_detail/{{ document.id }}">{{ document.title }}</a>  
+        {% endif %}
+        {% if current_user.is_doctor %}
+            <a href="/doctor_document_detail/{{ document.id }}">{{ document.title }}</a> 
+        {% endif %}
+
+    </div>
+    {% endfor %}
 
 
-</html>
+{% endblock %}
+

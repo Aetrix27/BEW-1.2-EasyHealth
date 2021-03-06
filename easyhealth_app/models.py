@@ -9,7 +9,6 @@ from passlib.hash import sha256_crypt
 
 from flask import session
 
-
 class User(db.Model, UserMixin):
     is_doctor = db.Column(db.Boolean, default=False)
     id = db.Column(db.Integer, primary_key=True)
@@ -19,11 +18,10 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(80), nullable=False)
     phone = db.Column(db.String(80))
     care_service = db.Column(db.String(80))
+    doctor_id = db.Column(db.String(80))
+    patient_id = db.Column(db.String(80))
 
-    #credentials = db.Column(db.String(80), nullable=False)
-
-
-class Patient(db.Model, UserMixin):
+class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
@@ -32,11 +30,10 @@ class Patient(db.Model, UserMixin):
     phone = db.Column(db.String(80))
     care_service = db.Column(db.String(80))
 
-    doctors = db.relationship("Doctor", secondary = 'patient_doctor', back_populates='patients')
-    pts_created = db.relationship("Document", back_populates='patient_docs')
+    patient = db.relationship("Document", back_populates='pts_created')
 
 
-class Doctor(db.Model, UserMixin):
+class Doctor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
@@ -45,24 +42,18 @@ class Doctor(db.Model, UserMixin):
     phone = db.Column(db.String(80))
     care_service = db.Column(db.String(80))
 
-    patients = db.relationship("Patient", secondary = 'patient_doctor', back_populates='doctors')
-    drs_created = db.relationship("Document", back_populates='doctor_docs')
+    doctor = db.relationship("Document", back_populates='drs_created')
 
-patient_doctor_table = db.Table('patient_doctor',
-    db.Column('patient_id', db.Integer, db.ForeignKey('patient.id')),
-    db.Column('doctor_id', db.Integer, db.ForeignKey('doctor.id'))
-
-)
 
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), nullable=False)
 
-    patient_table_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
-    doctor_table_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
+    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
     
-    patient_docs = db.relationship("Patient", back_populates='pts_created')
-    doctor_docs = db.relationship("Doctor", back_populates='drs_created')
+    pts_created = db.relationship("Patient", back_populates='patient')
+    drs_created = db.relationship("Doctor", back_populates='doctor')
     
 medical_docs_table = db.Table('medical_docs_table',
     db.Column('patient_id', db.Integer, db.ForeignKey('patient.id')),
