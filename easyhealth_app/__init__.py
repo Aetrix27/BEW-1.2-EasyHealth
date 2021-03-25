@@ -10,9 +10,7 @@ app.config.from_object(Config)
 app.secret_key = os.urandom(24)
 
 db = SQLAlchemy()
-
 bcrypt = Bcrypt(app)
-
 login_manager = LoginManager()
 login_manager.session_protection = "strong"
 login_manager.login_view = "patients.login"

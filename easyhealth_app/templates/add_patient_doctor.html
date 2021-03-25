@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<form method="POST" action = "{{ url_for('patients.add_patient_doctor', patient_ids=patient.id) }}">
+        {{ form.csrf_token }} 
+    
+        <fieldset>
+            <legend>Please enter the ID of your Doctor:</legend>
+    
+            <p><em>Form fields go here!</em></p>
+            
+            {% for error in form.doctor.errors %}
+            <span class="error">*{{ error }}</span>
+            {% endfor %}
+            {{ form.doctor.label }}
+            {{ form.doctor }}
+
+            {{ form.submit }}
+
+    
+        </fieldset>
+</form>
+
+
+{% endblock %}

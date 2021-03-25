@@ -18,8 +18,8 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(80), nullable=False)
     phone = db.Column(db.String(80))
     care_service = db.Column(db.String(80))
-    doctor_id = db.Column(db.String(80))
-    patient_id = db.Column(db.String(80))
+    doctor_ids = db.Column(db.String(80))
+    patient_ids = db.Column(db.String(80))
 
 class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,7 +30,8 @@ class Patient(db.Model):
     phone = db.Column(db.String(80))
     care_service = db.Column(db.String(80))
 
-    patient = db.relationship("Document", back_populates='pts_created')
+    doctors_id = db.relationship('Doctor', secondary = 'patient_doctor', back_populates='patients_id')
+    patient = db.relationship('Document', back_populates='pts_created')
 
 
 class Doctor(db.Model):
@@ -42,21 +43,29 @@ class Doctor(db.Model):
     phone = db.Column(db.String(80))
     care_service = db.Column(db.String(80))
 
-    doctor = db.relationship("Document", back_populates='drs_created')
+    patients_id = db.relationship('Patient', secondary = 'patient_doctor', back_populates='doctors_id')
+    doctor = db.relationship('Document', back_populates='drs_created')
 
+patient_doctor_table = db.Table('patient_doctor',
+    db.Column('patient_id', db.Integer, db.ForeignKey('patient.id')),
+    db.Column('doctor_id', db.Integer, db.ForeignKey('doctor.id'))
+
+)
 
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), nullable=False)
 
-    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
-    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
+    patient_id_col = db.Column(db.Integer, db.ForeignKey('patient.id'))
+    doctor_id_col = db.Column(db.Integer, db.ForeignKey('doctor.id'))
     
     pts_created = db.relationship("Patient", back_populates='patient')
     drs_created = db.relationship("Doctor", back_populates='doctor')
+
     
-medical_docs_table = db.Table('medical_docs_table',
-    db.Column('patient_id', db.Integer, db.ForeignKey('patient.id')),
-    db.Column('doctor_id', db.Integer, db.ForeignKey('doctor.id')),
-    db.Column('document_id', db.Integer, db.ForeignKey('document.id'))
-)
+#documents_table = db.Table('documents_table',
+ #   db.Column('patient_id', db.Integer, db.ForeignKey('patient.id')),
+ #   db.Column('doctor_id', db.Integer, db.ForeignKey('doctor.id')),
+ #   db.Column('document_id', db.Integer, db.ForeignKey('document.id'))
+#)
+

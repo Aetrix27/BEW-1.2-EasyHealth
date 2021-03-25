@@ -14,6 +14,7 @@
             {% for error in form.title.errors %}
             <span class="error">*{{ error }}</span>
             {% endfor %}
+            
             {{ form.title.label }}
             {{ form.title }}
 
@@ -22,7 +23,6 @@
 
             {{ form.submit }}
 
-    
         </fieldset>
 </form>
 

@@ -2,12 +2,10 @@ import os
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import date, datetime
-from easyhealth_app.models import User, Document, Doctor, Patient, medical_docs_table
-from easyhealth_app.forms import DocumentForm, SignUpForm, LoginForm
+from easyhealth_app.models import User, Document, Doctor, Patient
+from easyhealth_app.forms import DocumentForm, SignUpForm, LoginForm, AddDoctorForm
 from easyhealth_app import bcrypt
 from easyhealth_app.utils import patient_required, doctor_required
-
-# Import app and db from events_app package so that we can run app
 from easyhealth_app import app, db
 
 auth = Blueprint("auth", __name__)
@@ -33,10 +31,13 @@ def new_patient_document():
     
         document = Document(
             title=form.title.data,
-            pts_created=Patient.query.get(current_user.patient_id),
-            drs_created=Doctor.query.get(form.drs_created.data)
+            pts_created=Patient.query.get(current_user.patient_ids),
+            drs_created=Doctor.query.get(round(form.drs_created.data))
 
         )
+        print(current_user.patient_ids)
+        print(round(form.drs_created.data))
+
         db.session.add(document)
         db.session.commit()
         
@@ -44,6 +45,24 @@ def new_patient_document():
         return redirect(url_for('patients.patient_document_detail', document_id=document.id))
 
     return render_template('new_patient_document.html', form=form)
+
+@patients.route('/add_patient_doctor', methods=['GET', 'POST'])
+@login_required
+@patient_required
+def add_patient_doctor():
+    patient = Patient.query.get(current_user.patient_ids)
+        #current_user.patients_ids
+    form = AddDoctorForm(obj=patient)
+
+    if form.validate_on_submit(): 
+        patient.doctors_id = ([Doctor.query.get(form.doctor.data)])
+    
+    db.session.add(patient)
+    db.session.commit()
+        
+    flash('A new Doctor was succesfully added.')
+
+    return render_template('add_patient_doctor.html', patient=patient, form=form)
 
 @doctors.route('/new_doctor_document', methods=['GET', 'POST'])
 @login_required
@@ -55,11 +74,10 @@ def new_doctor_document():
     
         document = Document(
             title=form.title.data,
-            pts_created=Patient.query.get(current_user.doctor_id),
+            pts_created=Patient.query.get(current_user.doctor_ids),
             drs_created=Doctor.query.get(form.drs_created.data)
-
         )
-        print(current_user.doctor_id)
+
         db.session.add(document)
         db.session.commit()
         
@@ -71,7 +89,6 @@ def new_doctor_document():
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
-    print('in signup')
     form = SignUpForm()
 
     if form.validate_on_submit():
@@ -84,8 +101,8 @@ def signup():
             phone=form.phone.data,
             care_service=form.care_service.data,
             is_doctor=form.is_doctor.data,
-            doctor_id = -1,
-            patient_id = -1
+            doctor_ids = -1,
+            patient_ids = -1
         )
 
         db.session.add(user)
@@ -98,12 +115,12 @@ def signup():
                 name=form.name.data,
                 email=form.email.data,
                 phone=form.phone.data,
-                care_service=form.care_service.data,
+                care_service=form.care_service.data
             )
 
             db.session.add(doctor)
             db.session.commit()
-            user.doctor_id=doctor.id
+            user.doctor_ids=doctor.id
 
             db.session.add(user)
             db.session.commit()
@@ -115,25 +132,23 @@ def signup():
                 name=form.name.data,
                 email=form.email.data,
                 phone=form.phone.data,
-                care_service=form.care_service.data,
+                care_service=form.care_service.data
             )
 
             db.session.add(patient)
             db.session.commit()
 
-            user.patient_id = patient.id
+            user.patient_ids = patient.id
             db.session.add(user)
             db.session.commit()
         
         flash('Account Created.')
-        print('created')
 
         db.session.commit()
 
         return redirect(url_for('auth.login'))
     print(form.errors)
     return render_template('signup.html', form=form)
-
 
 @doctors.route('/doctor_document_detail/<document_id>', methods=['GET', 'POST'])
 @login_required
@@ -163,7 +178,7 @@ def patient_document_detail(document_id):
 
     if form.validate_on_submit():
         document.title=(form.title.data)
-        document.pts_created=(Patient.query.get(current_user.patient_id))
+        document.pts_created=(Patient.query.get(current_user.patient_ids))
         document.drs_created=(Doctor.query.get(form.drs_created.data))
 
     db.session.add(document)

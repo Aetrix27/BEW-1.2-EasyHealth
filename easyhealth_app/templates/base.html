@@ -3,30 +3,62 @@
     <head>
         <title>EasyHealth</title>
         <link rel="stylesheet" href="/static/style.css">
-    </head>
-    <body>
-        <nav>
-            <a href="/">Home</a>
-            <div>
-        <a href = "/signup">Sign Up</a>
-
-        <a href = "/login">Sign In</a>
-
-        <a href = "/new_patient_document">Send Medical Document</a>
-
-        <a href = "/new_doctor_document">Send Doctor Document</a>
-            </div>
-        </nav>
         
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>EasyHealth</title>
+        
+        <!-- BOOTSTRAP -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        
+        <!-- BOOTSTRAP THEME (Downloaded from Themes website)-->
+        <link rel="stylesheet" href="bootstrap.min.css">
+        
+        <!-- CUSTOM STYLES -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+        <link rel="stylesheet" href="style.css">
+        
+    </head>
+   <body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+            <a class="navbar-brand text-white" href="/">EasyHealth</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                  <a class="nav-link text-light" href="/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-light" href="/signup">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="/new_patient_document">Send Medical Document As Patient</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="/new_doctor_document">Send Document As Doctor</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="/add_patient_doctor">Add New Doctor</a>
+                </li>
+              </ul>
+                <a class="nav-link text-light" href="/login">Login</a>
+        
+            </div>
+          </nav>
 
 
-        <div id="content">
-            {% for message in get_flashed_messages() %}
-                {{ message }}
-            {% endfor %}
+            <div id="content">
+                {% for message in get_flashed_messages() %}
+                    {{ message }}
+                {% endfor %}
 
-            {% block content %}{% endblock %}
-        </div>
-        <script src="/static/index.js"></script>
+                {% block content %}{% endblock %}
+            </div>
+            <script src="/static/index.js"></script>
     </body>
 </html>

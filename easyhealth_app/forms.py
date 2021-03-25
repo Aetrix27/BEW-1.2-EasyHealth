@@ -13,6 +13,13 @@ class DocumentForm(FlaskForm):
     
     submit = SubmitField('Submit')
 
+class AddDoctorForm(FlaskForm):
+   
+    doctor = FloatField('Doctor:')
+    
+    submit = SubmitField('Submit')
+
+
 class LoginForm(FlaskForm):
     username = StringField('User Name:', validators=[DataRequired(), Length(min=3, max=50)])
     password = PasswordField('Password', validators=[DataRequired()])
